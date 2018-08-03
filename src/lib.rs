@@ -4,6 +4,7 @@
 #[macro_use] extern crate failure;
 #[macro_use] extern crate lazy_static;
 extern crate serde_json;
+extern crate serde_url_params;
 extern crate serde;
 extern crate chrono;
 extern crate hyper;

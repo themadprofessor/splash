@@ -14,7 +14,7 @@ lazy_static!(
 );
 
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize)]
 pub struct List {
     page: Option<usize>,
     per_page: Option<usize>,
@@ -40,7 +40,7 @@ impl List {
     }
 
     pub fn get<C>(self, client: &Client<C>, access_key: &str) -> impl Future<Item=Vec<Photo>, Error=Error> where C: Connect + 'static {
-        let request = Request::get(LIST_URI.clone())
+        let request = Request::get(format!("{}{}", LIST_URI.to_string(), serialize_query(&self)))
             .header("Accept", "application/json")
             .header("Accept-Version", "v1")
             .header("Authorization", format!("Client-ID {}", access_key).as_str())
@@ -81,5 +81,17 @@ fn parse_err(v: Vec<u8>) -> ::futures::future::FutureResult<Vec<Photo>, Error> {
     match ::serde_json::from_slice::<::endpoint::Errors>(&v) {
         Ok(j) => ::futures::future::err(Error::from(j.context(ErrorKind::Photos))),
         Err(e) => ::futures::future::err(Error::from(e.context(ErrorKind::Photos)))
+    }
+}
+
+fn serialize_query(query: &List) -> String {
+    let q = ::serde_url_params::to_string(query).unwrap();
+    if q.is_empty() {
+        String::new()
+    } else {
+        let mut s = String::with_capacity(q.len() + 1);
+        s.push('?');
+        s += &q;
+        s
     }
 }
