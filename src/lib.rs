@@ -13,5 +13,7 @@ use hyper::Uri;
 
 pub const API_URL: &'static str = "https://api.unsplash.com/";
 
-mod endpoint;
-mod error;
+pub mod endpoint;
+pub mod error;
+
+pub use endpoint::photos::Photos;

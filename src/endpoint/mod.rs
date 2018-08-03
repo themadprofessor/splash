@@ -1,9 +1,7 @@
-mod photos;
+pub mod photos;
 
 use std::error::Error;
 use std::fmt;
-
-pub use self::photos::Photos;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum Order {

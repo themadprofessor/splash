@@ -25,8 +25,8 @@ pub struct Photo {
     pub height: usize,
     pub color: String,
     pub likes: usize,
-    pub libed_by_user: bool,
-    pub description: String,
+    pub liked_by_user: bool,
+    pub description: Option<String>,
     pub user: User,
     pub current_user_collections: Vec<Collection>,
     pub urls: Urls,
@@ -38,9 +38,9 @@ pub struct User {
     pub id: String,
     pub username: String,
     pub name: String,
-    pub protfolio_url: String,
-    pub bio: String,
-    pub location: String,
+    pub portfolio_url: Option<String>,
+    pub bio: Option<String>,
+    pub location: Option<String>,
     pub total_likes: usize,
     pub total_photos: usize,
     pub total_collections: usize,
@@ -59,7 +59,8 @@ pub struct ProfileImages {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserLinks {
-    pub self_link: String, //Rename to self
+    #[serde(rename = "self")]
+    pub self_link: String,
     pub html: String,
     pub photos: String,
     pub likes: String,
@@ -86,10 +87,11 @@ pub struct Urls {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PhotoLinks {
+    #[serde(rename = "self")]
     pub self_link: String,
     pub html: String,
     pub download: String,
-    pub download_locaton: String
+    pub download_location: String
 }
 
 #[derive(Debug, Default)]
