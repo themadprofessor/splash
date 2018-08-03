@@ -3,13 +3,6 @@ pub mod photos;
 use std::error::Error;
 use std::fmt;
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-pub enum Order {
-    Latest,
-    Oldest,
-    Popular
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Errors(Vec<String>);
 
@@ -24,8 +17,3 @@ impl fmt::Display for Errors {
     }
 }
 
-impl Default for Order {
-    fn default() -> Self {
-        Order::Latest
-    }
-}
