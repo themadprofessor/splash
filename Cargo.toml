@@ -1,0 +1,15 @@
+[package]
+name = "splash-rs"
+version = "0.1.0"
+authors = ["Stuart Reilly <stu@reilly-family.co.uk>"]
+
+[dependencies]
+hyper = "0.12"
+hyper-rustls = "0.14"
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+chrono = { version = "0.4", features = ["serde"]}
+failure = "0.1"
+futures = "*"
+const-concat = "0.1"
