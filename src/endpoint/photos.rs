@@ -8,8 +8,10 @@ use failure::{ResultExt, Fail};
 use super::Order;
 use error::*;
 
-pub static LIST_URI: Uri = const_concat!(::API_URL, "photos").parse().unwrap();
-pub static RANDOM_URI: Uri = const_concat!(::API_URL, "photos/random").parse().unwrap();
+lazy_static!(
+    pub static ref LIST_URI: Uri = format!("{}{}", ::API_URL, "photos").parse().unwrap();
+    pub static ref RANDOM_URI: Uri = format!("{}{}", ::API_URL, "photos/random").parse().unwrap();
+);
 
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
 pub struct Photos;
