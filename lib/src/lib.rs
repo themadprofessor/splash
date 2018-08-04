@@ -1,15 +1,18 @@
 #![feature(option_replace)]
 
-#[macro_use] extern crate serde_derive;
-#[macro_use] extern crate failure;
-#[macro_use] extern crate lazy_static;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate failure;
+#[macro_use]
+extern crate lazy_static;
+extern crate chrono;
+extern crate futures;
+extern crate hyper;
+extern crate itertools;
+extern crate serde;
 extern crate serde_json;
 extern crate serde_url_params;
-extern crate serde;
-extern crate itertools;
-extern crate chrono;
-extern crate hyper;
-extern crate futures;
 
 use hyper::Uri;
 

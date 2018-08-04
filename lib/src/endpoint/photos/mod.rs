@@ -3,12 +3,10 @@ use chrono::{DateTime, FixedOffset};
 mod list;
 mod random;
 
-pub use self::list::{List};
-pub use self::random::{Random};
+pub use self::{list::List, random::Random};
 
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
 pub struct Photos;
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Photo {
@@ -24,7 +22,7 @@ pub struct Photo {
     pub user: User,
     pub current_user_collections: Vec<Collection>,
     pub urls: Urls,
-    pub links: PhotoLinks
+    pub links: PhotoLinks,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -41,14 +39,14 @@ pub struct User {
     pub instagram_username: Option<String>,
     pub twitter_username: Option<String>,
     pub profile_image: ProfileImages,
-    pub links: UserLinks
+    pub links: UserLinks,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProfileImages {
     pub small: String,
     pub medium: String,
-    pub large: String
+    pub large: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -58,7 +56,7 @@ pub struct UserLinks {
     pub html: String,
     pub photos: String,
     pub likes: String,
-    pub portfolio: String
+    pub portfolio: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -76,7 +74,7 @@ pub struct Urls {
     pub full: String,
     pub regular: String,
     pub small: String,
-    pub thumb: String
+    pub thumb: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -85,36 +83,29 @@ pub struct PhotoLinks {
     pub self_link: String,
     pub html: String,
     pub download: String,
-    pub download_location: String
+    pub download_location: String,
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub enum Order {
     Latest,
     Oldest,
-    Popular
+    Popular,
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub enum Orientation {
     Portrait,
     Landscape,
-    Squarish
+    Squarish,
 }
 
 impl Default for Order {
-    fn default() -> Self {
-        Order::Latest
-    }
+    fn default() -> Self { Order::Latest }
 }
 
 impl Photos {
-    pub fn list() -> List {
-        List::default()
-    }
+    pub fn list() -> List { List::default() }
 
-    pub fn random() -> Random {
-        Random::default()
-    }
+    pub fn random() -> Random { Random::default() }
 }
-

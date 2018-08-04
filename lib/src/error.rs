@@ -1,26 +1,22 @@
-use failure::{Context, Fail, Backtrace};
+use failure::{Backtrace, Context, Fail};
 
 use std::fmt;
 
 #[derive(Debug)]
 pub struct Error {
-    inner: Context<ErrorKind>
+    inner: Context<ErrorKind>,
 }
 
 #[derive(Debug, Hash, Eq, PartialEq, Copy, Clone, Fail)]
 pub enum ErrorKind {
     #[fail(display = "Failed to successfully access Photos endpoint.")]
-    Photos
+    Photos,
 }
 
 impl Fail for Error {
-    fn cause(&self) -> Option<&Fail> {
-        self.inner.cause()
-    }
+    fn cause(&self) -> Option<&Fail> { self.inner.cause() }
 
-    fn backtrace(&self) -> Option<&Backtrace> {
-        self.inner.backtrace()
-    }
+    fn backtrace(&self) -> Option<&Backtrace> { self.inner.backtrace() }
 }
 
 impl fmt::Display for Error {
@@ -30,13 +26,9 @@ impl fmt::Display for Error {
 }
 
 impl From<ErrorKind> for Error {
-    fn from(inner: ErrorKind) -> Self {
-        Error {inner: Context::new(inner)}
-    }
+    fn from(inner: ErrorKind) -> Self { Error { inner: Context::new(inner) } }
 }
 
 impl From<Context<ErrorKind>> for Error {
-    fn from(inner: Context<ErrorKind>) -> Self {
-        Error {inner}
-    }
+    fn from(inner: Context<ErrorKind>) -> Self { Error { inner } }
 }
