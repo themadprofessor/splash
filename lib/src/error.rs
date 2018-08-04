@@ -2,15 +2,22 @@ use failure::{Backtrace, Context, Fail};
 
 use std::fmt;
 
+/// An Error which can occur when accessing the Unsplash API.
 #[derive(Debug)]
 pub struct Error {
     inner: Context<ErrorKind>,
 }
 
+/// Types of errors which can be raised by this crate.
 #[derive(Debug, Hash, Eq, PartialEq, Copy, Clone, Fail)]
 pub enum ErrorKind {
-    #[fail(display = "Failed to successfully access Photos endpoint.")]
-    Photos,
+    /// Raised when there is an issue with the request.
+    #[fail(display = "Failed to send request.")]
+    Request,
+
+    /// Raised when the response from Unsplash cannot be understood.
+    #[fail(display = "Failed to parse response from Unsplash.")]
+    MalformedResponse
 }
 
 impl Fail for Error {
@@ -31,4 +38,11 @@ impl From<ErrorKind> for Error {
 
 impl From<Context<ErrorKind>> for Error {
     fn from(inner: Context<ErrorKind>) -> Self { Error { inner } }
+}
+
+impl Error {
+    /// Returns the context of this error
+    pub fn kind(&self) -> ErrorKind {
+        *self.inner.get_context()
+    }
 }

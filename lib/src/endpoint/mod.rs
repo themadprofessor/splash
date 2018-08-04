@@ -1,3 +1,4 @@
+/// Photos endpoint
 pub mod photos;
 
 use failure::Fail;
@@ -9,7 +10,15 @@ use std::{error::Error as StdError, fmt};
 
 use error::*;
 
+/// A trait to define how to convert a type into a GET Query String.
+/// A blanket impl is provided for all Serializable types.
 pub trait ToQuery {
+    /// Create a GET Query String from self.
+    /// If a query string cannot be be create (i.e. self contains no useful data such as only Nones),
+    /// then an empty String should be returned.
+    /// Otherwise, the returned String must:
+    /// - start with a '?'
+    /// - be url encoded
     fn to_query(&self) -> String;
 }
 
@@ -28,6 +37,9 @@ impl<T> ToQuery for T where T: Serialize
     }
 }
 
+/// List of errors returned from Unsplash.
+/// Unsplash returns a list of Strings upon an error, and this type is used to handle that case.
+/// It is normally wrapped in an [Error](struct.Error.html).
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Errors(Vec<String>);
 
@@ -42,29 +54,32 @@ impl fmt::Display for Errors {
     }
 }
 
+/// Used to parse JSON into [Errors](struct.Errors.html).
 fn parse_err<T>(v: Vec<u8>) -> ::futures::future::FutureResult<T, Error>
     where T: DeserializeOwned
 {
     match ::serde_json::from_slice::<::endpoint::Errors>(&v) {
-        Ok(j) => ::futures::future::err(Error::from(j.context(ErrorKind::Photos))),
-        Err(e) => ::futures::future::err(Error::from(e.context(ErrorKind::Photos))),
+        Ok(j) => ::futures::future::err(Error::from(j.context(ErrorKind::MalformedResponse))),
+        Err(e) => ::futures::future::err(Error::from(e.context(ErrorKind::MalformedResponse))),
     }
 }
 
+/// Used to parse JSON into any serializable type.
 fn parse_data<T>(v: Vec<u8>) -> ::futures::future::FutureResult<T, Error>
     where T: DeserializeOwned
 {
     match ::serde_json::from_slice::<T>(&v) {
         Ok(j) => ::futures::future::ok(j),
-        Err(e) => ::futures::future::err(Error::from(e.context(ErrorKind::Photos))),
+        Err(e) => ::futures::future::err(Error::from(e.context(ErrorKind::MalformedResponse))),
     }
 }
 
+/// Convenience method for performing a GET request to Unsplash, determining if an error occur and
+/// returning a Future to represent this.
 fn get<T, C, R>(query: T,
                 client: &Client<C>,
                 access_key: &str,
-                uri: Uri,
-                context: ErrorKind)
+                uri: Uri)
                 -> impl Future<Item = R, Error = Error>
     where T: Serialize,
           C: Connect + 'static,
@@ -78,16 +93,17 @@ fn get<T, C, R>(query: T,
                                                                             access_key).as_str())
                                                             .body(::hyper::Body::empty())
                                                             .unwrap();
-    client.request(request).map_err(move |e| Error::from(e.context(context))).and_then(|res| {
+    client.request(request).map_err(move |e| Error::from(e.context(ErrorKind::Request))).and_then(|res| {
         let parser = if res.status().is_success() { parse_data::<R> } else { parse_err };
 
         res.into_body()
-           .map_err(|e| Error::from(e.context(ErrorKind::Photos)))
+           .map_err(|e| Error::from(e.context(ErrorKind::MalformedResponse)))
            .fold(Vec::new(), fold)
            .and_then(parser)
     })
 }
 
+/// Used to convert a Stream of Chunks into a Vec to be used for deserialization.
 fn fold(mut v: Vec<u8>, chunk: ::hyper::Chunk) -> ::futures::future::Ok<Vec<u8>, Error> {
     v.extend(&chunk[..]);
     ::futures::future::ok(v)

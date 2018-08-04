@@ -8,12 +8,11 @@ extern crate splash_rs;
 extern crate tokio;
 extern crate wallpaper;
 
-use clap::{App, Arg, ArgMatches};
+use clap::{App, Arg};
 use failure::Error;
-use hyper::{client::connect::Connect, rt::Future, Client};
+use hyper::rt::Future;
 use tokio::runtime::Runtime;
 
-use splash_rs::{endpoint::photos::Photo, error::Error as SplashError};
 
 fn main() {
     if let Err(e) = run() {
@@ -29,7 +28,7 @@ fn main() {
 }
 
 fn run() -> Result<(), Error> {
-    let mut matches = build_cli().get_matches();
+    let matches = build_cli().get_matches();
     let mut fut = splash_rs::Photos::random();
 
     if let Some(h) = matches.value_of_lossy("height") {
