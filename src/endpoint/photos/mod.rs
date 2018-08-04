@@ -117,3 +117,4 @@ impl Photos {
         Random::default()
     }
 }
+

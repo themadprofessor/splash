@@ -10,7 +10,6 @@ use error::*;
 
 lazy_static!(
     pub static ref LIST_URI: Uri = format!("{}{}", ::API_URL, "photos").parse().unwrap();
-    pub static ref RANDOM_URI: Uri = format!("{}{}", ::API_URL, "photos/random").parse().unwrap();
 );
 
 
@@ -52,7 +51,7 @@ impl List {
                 let parser = if res.status().is_success() {
                     parse_photos
                 } else {
-                    parse_err
+                    ::endpoint::parse_err
                 };
 
                 res.into_body().map_err(error_ctx).fold(Vec::new(), fold)

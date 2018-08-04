@@ -6,6 +6,7 @@
 extern crate serde_json;
 extern crate serde_url_params;
 extern crate serde;
+extern crate itertools;
 extern crate chrono;
 extern crate hyper;
 extern crate futures;
