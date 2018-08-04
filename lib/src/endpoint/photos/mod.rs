@@ -1,3 +1,7 @@
+//! Photos endpoint
+//!
+//! Access to the endpoint is through the [Photo](struct.Photos.html) struct.
+
 use chrono::{DateTime, FixedOffset};
 
 mod list;
