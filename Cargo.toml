@@ -8,4 +8,5 @@ authors = ["Stuart Reilly <stu@reilly-family.co.uk>"]
 [dependencies]
 splash-rs = {version = "*", path="lib/"}
 hyper-rustls = "0.14"
-hyper = "0.12"
+hyper = {version = "0.12", default-features = false, features = []}
+tokio = "0.1"

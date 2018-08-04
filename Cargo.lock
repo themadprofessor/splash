@@ -531,6 +531,7 @@ dependencies = [
  "hyper 0.12.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper-rustls 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "splash-rs 0.1.0",
+ "tokio 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
