@@ -1,10 +1,8 @@
 extern crate hyper_rustls;
 extern crate splash_rs;
 extern crate hyper;
-extern crate failure;
 
 use hyper::rt::Future;
-use failure::Fail;
 
 fn main() {
     let client = hyper::Client::builder().build(hyper_rustls::HttpsConnector::new(2));
