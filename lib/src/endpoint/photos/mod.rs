@@ -5,6 +5,7 @@
 use chrono::{DateTime, FixedOffset};
 use futures::Future;
 use hyper::{client::connect::Connect, Client};
+use endpoint::me::User;
 
 use std::fmt;
 
@@ -54,64 +55,6 @@ pub struct Photo {
     pub urls: Urls,
     /// Links to the photo.
     pub links: PhotoLinks,
-}
-
-/// A User on Unsplash
-#[derive(Debug, Serialize, Deserialize)]
-pub struct User {
-    /// User ID.
-    pub id: String,
-    /// Username.
-    pub username: String,
-    /// User's real name.
-    pub name: String,
-    /// URL to the user's portfolio.
-    pub portfolio_url: Option<String>,
-    /// User's bio.
-    pub bio: Option<String>,
-    /// User's location.
-    pub location: Option<String>,
-    /// Total number of likes the user has received.
-    pub total_likes: usize,
-    /// Total number of photos the user has uploaded.
-    pub total_photos: usize,
-    /// Total number of collections the user has.
-    pub total_collections: usize,
-    /// User's instagram username.
-    pub instagram_username: Option<String>,
-    /// User's twitter username.
-    pub twitter_username: Option<String>,
-    /// URLs to the user's profile image in various sizes.
-    pub profile_image: ProfileImages,
-    /// Links to the user's profile.
-    pub links: UserLinks,
-}
-
-/// A user's profile images
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ProfileImages {
-    /// URL to a small version of the user's profile.
-    pub small: String,
-    /// URL to a medium version of the user's profile.
-    pub medium: String,
-    /// URL to a large version of the user's profile.
-    pub large: String,
-}
-
-/// Links to pages about a user.
-#[derive(Debug, Serialize, Deserialize)]
-pub struct UserLinks {
-    /// Link to the user in the user endpoint.
-    #[serde(rename = "self")]
-    pub self_link: String,
-    /// Link to the user's profile
-    pub html: String,
-    /// API link to the user's photos.
-    pub photos: String,
-    /// API link to the user's likes.
-    pub likes: String,
-    /// API link to the user's profolio.
-    pub portfolio: String,
 }
 
 /// A collection of photos on Unsplsash
@@ -196,7 +139,7 @@ impl Photo {
     where
         C: Connect + 'static,
     {
-        ::endpoint::get((), &client, access_key, self.links.download_location.parse().unwrap())
+        ::endpoint::get((), &client, format!("Client-ID: {}", access_key).as_ref(), self.links.download_location.parse().unwrap())
     }
 }
 

@@ -194,7 +194,7 @@ impl RandomQuery {
             collection: None,
             query: Some(self.query),
         };
-        ::endpoint::get(serial, &client, access_key, RANDOM_URI.clone())
+        ::endpoint::get(serial, &client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
     }
 }
 
@@ -230,7 +230,7 @@ impl RandomCollection {
             collection: Some(self.collection),
             query: None,
         };
-        ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
+        ::endpoint::get(serial, client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
     }
 }
 
@@ -260,7 +260,7 @@ impl RandomCount {
             query: None,
             count: self.count,
         };
-        ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
+        ::endpoint::get(serial, client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
     }
 }
 
@@ -290,7 +290,7 @@ impl RandomQueryCount {
             query: Some(self.rand.query),
             count: self.count,
         };
-        ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
+        ::endpoint::get(serial, client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
     }
 }
 
@@ -320,6 +320,6 @@ impl RandomCollectionCount {
             query: None,
             count: self.count,
         };
-        ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
+        ::endpoint::get(serial, client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
     }
 }

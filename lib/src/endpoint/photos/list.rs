@@ -63,6 +63,6 @@ impl List {
     where
         C: Connect + 'static,
     {
-        ::endpoint::get(self, client, access_key, LIST_URI.clone())
+        ::endpoint::get(self, client, format!("Client-ID: {}", access_key).as_ref(), LIST_URI.clone())
     }
 }

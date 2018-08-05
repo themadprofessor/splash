@@ -1,5 +1,7 @@
-/// Photos endpoint
+/// Photos endpoint.
 pub mod photos;
+/// Me endpoint.
+pub mod me;
 
 use failure::Fail;
 use futures::{Future, Stream};
@@ -81,7 +83,7 @@ where
 fn get<T, C, R>(
     query: T,
     client: &Client<C>,
-    access_key: &str,
+    auth: &str,
     uri: Uri,
 ) -> impl Future<Item = R, Error = Error>
 where
@@ -93,7 +95,7 @@ where
     let request = Request::get(format!("{}{}", uri, query.to_query()))
         .header("Accept", "application/json")
         .header("Accept-Version", "v1")
-        .header("Authorization", format!("Client-ID {}", access_key).as_str())
+        .header("Authorization", auth)
         .body(::hyper::Body::empty())
         .unwrap();
     trace!("request: {:?}", request);

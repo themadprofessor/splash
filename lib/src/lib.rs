@@ -36,3 +36,4 @@ pub mod endpoint;
 pub mod error;
 
 pub use endpoint::photos::Photos;
+pub use endpoint::me::Me;
