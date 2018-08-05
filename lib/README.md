@@ -6,7 +6,7 @@
 > Rust API for accessing the Unsplash API
 
 A Rust API built on [hyper](https://hyper.rs) for accessing the [Unsplash API](https://unsplash.com/documentation).
-Currently, only has support for getting a list of photos and random photo(s).
+Currently, very unfinished.
 
 ## Table of Contents
 
