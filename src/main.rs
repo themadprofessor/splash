@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate clap;
+#[macro_use] extern crate log;
+extern crate flexi_logger;
 extern crate failure;
 extern crate futures;
 extern crate hyper;
@@ -11,13 +13,14 @@ extern crate wallpaper;
 use failure::Error;
 use hyper::rt::Future;
 use tokio::runtime::Runtime;
+use flexi_logger::Logger;
 
 mod cli;
 use cli::build_cli;
 
 fn main() {
     if let Err(e) = run() {
-        eprintln!("{}{}",
+        error!("{}{}",
                   e,
                   e.iter_causes().map(|err| format!("\n\tcause: {}", err)).fold(String::new(),
                                                                                 |mut s, err| {
@@ -29,6 +32,8 @@ fn main() {
 }
 
 fn run() -> Result<(), Error> {
+    Logger::with_env().start().map_err(Error::from)?;
+
     let matches = build_cli().get_matches();
     let mut fut = splash_rs::Photos::random();
 
@@ -56,8 +61,11 @@ fn run() -> Result<(), Error> {
 
     let client = hyper::Client::builder().build(hyper_rustls::HttpsConnector::new(2));
     let mut runtime = Runtime::new().unwrap();
+    debug!("initialised runtime");
 
     if let Some(query) = matches.value_of_lossy("query") {
+        debug!("using query");
+        trace!("query: {}", query);
         let fut =
             fut.query(query.to_string())
                .get(&client, "87e5c4f5e3db3a47a9cbc9abefbd196e3f7aa9a7cccc1ca4751008ec796e4eb7")
@@ -69,6 +77,8 @@ fn run() -> Result<(), Error> {
                .map_err(|e| eprintln!("{:?}", e));
         runtime.block_on(fut).map_err(|_| ::failure::err_msg("failed to wait for response"))?;
     } else if let Some(collections) = matches.values_of_lossy("collections") {
+        debug!("using collections");
+        trace!("collections: {:?}", collections);
         let fut =
             fut.collection(collections)
                .get(&client, "87e5c4f5e3db3a47a9cbc9abefbd196e3f7aa9a7cccc1ca4751008ec796e4eb7")
@@ -80,6 +90,7 @@ fn run() -> Result<(), Error> {
                .map_err(|e| eprintln!("{:?}", e));
         runtime.block_on(fut).map_err(|_| ::failure::err_msg("failed to wait for response"))?;
     } else {
+        debug!("no query or collection");
         let fut =
             fut.get(&client, "87e5c4f5e3db3a47a9cbc9abefbd196e3f7aa9a7cccc1ca4751008ec796e4eb7")
                .map_err(Error::from)
@@ -92,5 +103,6 @@ fn run() -> Result<(), Error> {
     }
 
     runtime.shutdown_now().wait().map_err(|_| ::failure::err_msg("failed to shutdown tokio"))?;
+    debug!("shutdown runtime");
     Ok(())
 }
