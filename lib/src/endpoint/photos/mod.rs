@@ -3,9 +3,16 @@
 //! Access to the endpoint is through the [Photo](struct.Photos.html) struct.
 
 use chrono::{DateTime, FixedOffset};
+use hyper::Client;
+use hyper::client::connect::Connect;
+use futures::Future;
+
+use std::fmt;
 
 mod list;
 mod random;
+
+use error::*;
 
 pub use self::{list::List, random::Random};
 
@@ -13,7 +20,13 @@ pub use self::{list::List, random::Random};
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
 pub struct Photos;
 
-/// A Photo from Unsplash.
+/// A type for a url returned from a photo's download endpoint.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Url {
+    url: String
+}
+
+    /// A Photo from Unsplash.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Photo {
     /// Photo ID.
@@ -167,6 +180,29 @@ pub enum Orientation {
     Landscape,
     /// Squarish shape.
     Squarish,
+}
+
+impl Photo {
+    /// Gets the download URL for this photo.
+    ///
+    /// Unsplash requires user of its API to download photos from the URL returned by the photo's
+    /// download endpoint (/photo/<id>/download). The URL of the download endpoint is accessable from
+    /// a Photo object (photo.links.download_location).
+    pub fn get_download_url<C>(&self, client: &Client<C>, access_key: &str) -> impl Future<Item=Url, Error=Error> where C: Connect + 'static {
+        ::endpoint::get((), &client, access_key, self.links.download_location.parse().unwrap())
+    }
+}
+
+impl fmt::Display for Url {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        f.write_str(&self.url)
+    }
+}
+
+impl AsRef<str> for Url {
+    fn as_ref(&self) -> &str {
+        self.url.as_ref()
+    }
 }
 
 impl Default for Order {

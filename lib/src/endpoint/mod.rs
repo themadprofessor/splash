@@ -5,6 +5,7 @@ use failure::Fail;
 use futures::{Future, Stream};
 use hyper::{client::connect::Connect, Client, Request, Uri};
 use serde::{de::DeserializeOwned, ser::Serialize};
+use itertools::Itertools;
 
 use std::{error::Error as StdError, fmt};
 
@@ -47,10 +48,7 @@ impl StdError for Errors {}
 
 impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        for e in self.0.iter() {
-            f.write_str(&e)?;
-        }
-        Ok(())
+        f.write_str(&self.0.iter().join("\n"))
     }
 }
 

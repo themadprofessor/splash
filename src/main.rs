@@ -18,6 +18,8 @@ use flexi_logger::Logger;
 mod cli;
 use cli::build_cli;
 
+const KEY: &str = "87e5c4f5e3db3a47a9cbc9abefbd196e3f7aa9a7cccc1ca4751008ec796e4eb7";
+
 fn main() {
     if let Err(e) = run() {
         error!("{}{}",
@@ -68,9 +70,16 @@ fn run() -> Result<(), Error> {
         trace!("query: {}", query);
         let fut =
             fut.query(query.to_string())
-               .get(&client, "87e5c4f5e3db3a47a9cbc9abefbd196e3f7aa9a7cccc1ca4751008ec796e4eb7")
+               .get(&client, KEY)
                .map_err(Error::from)
-               .and_then(|p| match wallpaper::set_from_url(&p.urls.full) {
+                .map(|p| {
+                    println!("Photo by {} ({})", p.user.username, p.user.name);
+                    println!("URL: {}", p.links.html);
+                    println!("Profile: {}", p.user.links.html);
+                    p
+                })
+                .and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
+               .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
                              Ok(_) => ::futures::future::ok(()),
                              Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
                          })
@@ -81,9 +90,16 @@ fn run() -> Result<(), Error> {
         trace!("collections: {:?}", collections);
         let fut =
             fut.collection(collections)
-               .get(&client, "87e5c4f5e3db3a47a9cbc9abefbd196e3f7aa9a7cccc1ca4751008ec796e4eb7")
+               .get(&client, KEY)
                .map_err(Error::from)
-               .and_then(|p| match wallpaper::set_from_url(&p.urls.full) {
+                .map(|p| {
+                    println!("Photo by {} ({})", p.user.username, p.user.name);
+                    println!("URL: {}", p.user.links.html);
+                    println!("Profile: {}", p.links.html);
+                    p
+                })
+                .and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
+               .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
                              Ok(_) => ::futures::future::ok(()),
                              Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
                          })
@@ -92,9 +108,16 @@ fn run() -> Result<(), Error> {
     } else {
         debug!("no query or collection");
         let fut =
-            fut.get(&client, "87e5c4f5e3db3a47a9cbc9abefbd196e3f7aa9a7cccc1ca4751008ec796e4eb7")
+            fut.get(&client, KEY)
                .map_err(Error::from)
-               .and_then(|p| match wallpaper::set_from_url(&p.urls.full) {
+               .map(|p| {
+                   println!("Photo by {} ({})", p.user.username, p.user.name);
+                   println!("URL: {}", p.links.html);
+                   println!("Profile: {}", p.user.links.html);
+                   p
+               })
+                .and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
+               .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
                              Ok(_) => ::futures::future::ok(()),
                              Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
                          })
