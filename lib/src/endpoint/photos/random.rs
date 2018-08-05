@@ -34,7 +34,8 @@ pub struct RandomQuery {
     query: String,
 }
 
-/// Session type to handle returning a list of random photos restricted by a query.
+/// Session type to handle returning a list of random photos restricted by a
+/// query.
 #[derive(Debug, Default)]
 pub struct RandomQueryCount {
     rand: RandomQuery,
@@ -48,7 +49,8 @@ pub struct RandomCollection {
     collection: String,
 }
 
-/// Session type to handle returning a list of random photos restricted by a set of collections.
+/// Session type to handle returning a list of random photos restricted by a
+/// set of collections.
 #[derive(Debug, Default)]
 pub struct RandomCollectionCount {
     rand: RandomCollection,
@@ -111,19 +113,21 @@ impl Random {
         self
     }
 
-    /// Restrict the photos to only photos which match the given query. NOTE: only the number of
-    /// photos can be set after this is called.
+    /// Restrict the photos to only photos which match the given query. NOTE:
+    /// only the number of photos can be set after this is called.
     pub fn query(self, query: String) -> RandomQuery { RandomQuery { rand: self, query } }
 
-    /// Restrict the photos to only photos which are within the given collections. NOTE: only the
-    /// number of photos can be set this is called.
+    /// Restrict the photos to only photos which are within the given
+    /// collections. NOTE: only the number of photos can be set this is
+    /// called.
     pub fn collection<I>(self, collection: I) -> RandomCollection
         where I: IntoIterator<Item = String>
     {
         RandomCollection { rand: self, collection: collection.into_iter().join(",") }
     }
 
-    /// Specify the the number of photos to get. NOTE: nothing can be set after this is called.
+    /// Specify the the number of photos to get. NOTE: nothing can be set after
+    /// this is called.
     pub fn count(self, count: usize) -> RandomCount {
         assert_ne!(count, 0, "Cannot get 0 images!");
         RandomCount { rand: self, count }
@@ -132,9 +136,10 @@ impl Random {
     /// Get the a random photo.
     ///
     /// # Errors
-    /// - Request wrapping a Hyper error is raised if there is an error handling the HTTP Stream.
-    /// - MalformedResponse
-    ///     - wrapping a JSON error is raised if the JSON returned from Unsplash is invalid.
+    /// - Request wrapping a Hyper error is raised if there is an error
+    /// handling the HTTP Stream. - MalformedResponse
+    ///     - wrapping a JSON error is raised if the JSON returned from
+    /// Unsplash is invalid.
     pub fn get<C>(self,
                   client: &Client<C>,
                   access_key: &str)
@@ -153,7 +158,8 @@ impl Random {
 }
 
 impl RandomQuery {
-    /// Specify the the number of photos to get. NOTE: nothing can be set after this is called.
+    /// Specify the the number of photos to get. NOTE: nothing can be set after
+    /// this is called.
     pub fn count(self, count: usize) -> RandomQueryCount {
         assert_ne!(count, 0, "Cannot get 0 images!");
         RandomQueryCount { rand: self, count }
@@ -162,9 +168,10 @@ impl RandomQuery {
     /// Get the a random photo which matches the query.
     ///
     /// # Errors
-    /// - Request wrapping a Hyper error is raised if there is an error handling the HTTP Stream.
-    /// - MalformedResponse
-    ///     - wrapping a JSON error is raised if the JSON returned from Unsplash is invalid.
+    /// - Request wrapping a Hyper error is raised if there is an error
+    /// handling the HTTP Stream. - MalformedResponse
+    ///     - wrapping a JSON error is raised if the JSON returned from
+    /// Unsplash is invalid.
     pub fn get<C>(self,
                   client: &Client<C>,
                   access_key: &str)
@@ -183,7 +190,8 @@ impl RandomQuery {
 }
 
 impl RandomCollection {
-    /// Specify the the number of photos to get. NOTE: nothing can be set after this is called.
+    /// Specify the the number of photos to get. NOTE: nothing can be set after
+    /// this is called.
     pub fn count(self, count: usize) -> RandomCollectionCount {
         assert_ne!(count, 0, "Cannot get 0 images!");
         RandomCollectionCount { rand: self, count }
@@ -192,9 +200,10 @@ impl RandomCollection {
     /// Get the a random photo which is in the collections.
     ///
     /// # Errors
-    /// - Request wrapping a Hyper error is raised if there is an error handling the HTTP Stream.
-    /// - MalformedResponse
-    ///     - wrapping a JSON error is raised if the JSON returned from Unsplash is invalid.
+    /// - Request wrapping a Hyper error is raised if there is an error
+    /// handling the HTTP Stream. - MalformedResponse
+    ///     - wrapping a JSON error is raised if the JSON returned from
+    /// Unsplash is invalid.
     pub fn get<C>(self,
                   client: &Client<C>,
                   access_key: &str)
@@ -216,9 +225,10 @@ impl RandomCount {
     /// Get the random photos.
     ///
     /// # Errors
-    /// - Request wrapping a Hyper error is raised if there is an error handling the HTTP Stream.
-    /// - MalformedResponse
-    ///     - wrapping a JSON error is raised if the JSON returned from Unsplash is invalid.
+    /// - Request wrapping a Hyper error is raised if there is an error
+    /// handling the HTTP Stream. - MalformedResponse
+    ///     - wrapping a JSON error is raised if the JSON returned from
+    /// Unsplash is invalid.
     pub fn get<C>(self,
                   client: &Client<C>,
                   access_key: &str)
@@ -241,9 +251,10 @@ impl RandomQueryCount {
     /// Get the random photos which matches the query.
     ///
     /// # Errors
-    /// - Request wrapping a Hyper error is raised if there is an error handling the HTTP Stream.
-    /// - MalformedResponse
-    ///     - wrapping a JSON error is raised if the JSON returned from Unsplash is invalid.
+    /// - Request wrapping a Hyper error is raised if there is an error
+    /// handling the HTTP Stream. - MalformedResponse
+    ///     - wrapping a JSON error is raised if the JSON returned from
+    /// Unsplash is invalid.
     pub fn get<C>(self,
                   client: &Client<C>,
                   access_key: &str)
@@ -266,9 +277,10 @@ impl RandomCollectionCount {
     /// Get the random photos which are in the collections.
     ///
     /// # Errors
-    /// - Request wrapping a Hyper error is raised if there is an error handling the HTTP Stream.
-    /// - MalformedResponse
-    ///     - wrapping a JSON error is raised if the JSON returned from Unsplash is invalid.
+    /// - Request wrapping a Hyper error is raised if there is an error
+    /// handling the HTTP Stream. - MalformedResponse
+    ///     - wrapping a JSON error is raised if the JSON returned from
+    /// Unsplash is invalid.
     pub fn get<C>(self,
                   client: &Client<C>,
                   access_key: &str)

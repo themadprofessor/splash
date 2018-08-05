@@ -14,8 +14,8 @@ use error::*;
 /// A blanket impl is provided for all Serializable types.
 pub trait ToQuery {
     /// Create a GET Query String from self.
-    /// If a query string cannot be be create (i.e. self contains no useful data such as only Nones),
-    /// then an empty String should be returned.
+    /// If a query string cannot be be create (i.e. self contains no useful
+    /// data such as only Nones), then an empty String should be returned.
     /// Otherwise, the returned String must:
     /// - start with a '?'
     /// - be url encoded
@@ -38,8 +38,8 @@ impl<T> ToQuery for T where T: Serialize
 }
 
 /// List of errors returned from Unsplash.
-/// Unsplash returns a list of Strings upon an error, and this type is used to handle that case.
-/// It is normally wrapped in an [Error](struct.Error.html).
+/// Unsplash returns a list of Strings upon an error, and this type is used to
+/// handle that case. It is normally wrapped in an [Error](struct.Error.html).
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Errors(Vec<String>);
 
@@ -74,8 +74,8 @@ fn parse_data<T>(v: Vec<u8>) -> ::futures::future::FutureResult<T, Error>
     }
 }
 
-/// Convenience method for performing a GET request to Unsplash, determining if an error occur and
-/// returning a Future to represent this.
+/// Convenience method for performing a GET request to Unsplash, determining if
+/// an error occur and returning a Future to represent this.
 fn get<T, C, R>(query: T,
                 client: &Client<C>,
                 access_key: &str,
@@ -93,17 +93,20 @@ fn get<T, C, R>(query: T,
                                                                             access_key).as_str())
                                                             .body(::hyper::Body::empty())
                                                             .unwrap();
-    client.request(request).map_err(move |e| Error::from(e.context(ErrorKind::Request))).and_then(|res| {
-        let parser = if res.status().is_success() { parse_data::<R> } else { parse_err };
+    client.request(request)
+          .map_err(move |e| Error::from(e.context(ErrorKind::Request)))
+          .and_then(|res| {
+                  let parser = if res.status().is_success() { parse_data::<R> } else { parse_err };
 
-        res.into_body()
-           .map_err(|e| Error::from(e.context(ErrorKind::MalformedResponse)))
-           .fold(Vec::new(), fold)
-           .and_then(parser)
-    })
+                  res.into_body()
+                     .map_err(|e| Error::from(e.context(ErrorKind::MalformedResponse)))
+                     .fold(Vec::new(), fold)
+                     .and_then(parser)
+              })
 }
 
-/// Used to convert a Stream of Chunks into a Vec to be used for deserialization.
+/// Used to convert a Stream of Chunks into a Vec to be used for
+/// deserialization.
 fn fold(mut v: Vec<u8>, chunk: ::hyper::Chunk) -> ::futures::future::Ok<Vec<u8>, Error> {
     v.extend(&chunk[..]);
     ::futures::future::ok(v)

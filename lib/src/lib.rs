@@ -1,9 +1,12 @@
 #![feature(option_replace)]
 #![deny(missing_docs,
-        missing_debug_implementations, missing_copy_implementations,
-        trivial_casts, trivial_numeric_casts,
+        missing_debug_implementations,
+        missing_copy_implementations,
+        trivial_casts,
+        trivial_numeric_casts,
         unsafe_code,
-        unused_import_braces, unused_qualifications)]
+        unused_import_braces,
+        unused_qualifications)]
 //! Documentation
 #[macro_use]
 extern crate serde_derive;

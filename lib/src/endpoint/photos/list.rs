@@ -1,6 +1,4 @@
-use hyper::{client::connect::Connect,
-            rt::Future,
-            Client, Uri};
+use hyper::{client::connect::Connect, rt::Future, Client, Uri};
 
 use super::{Order, Photo};
 use error::*;
@@ -52,17 +50,17 @@ impl List {
     /// Get the list of photos.
     ///
     /// # Errors
-    /// - Request wrapping a Hyper error is raised if there is an error handling the HTTP Stream.
-    /// - MalformedResponse
-    ///     - wrapping a JSON error is raised if the JSON returned from Unsplash is invalid.
-    ///     - wrapping an IO error is raised if an IO error occurs.
+    /// - Request wrapping a Hyper error is raised if there is an error
+    /// handling the HTTP Stream. - MalformedResponse
+    ///     - wrapping a JSON error is raised if the JSON returned from
+    /// Unsplash is invalid.     - wrapping an IO error is raised if an IO
+    /// error occurs.
     pub fn get<C>(self,
                   client: &Client<C>,
                   access_key: &str)
                   -> impl Future<Item = Vec<Photo>, Error = Error>
         where C: Connect + 'static
     {
-
         ::endpoint::get(self, client, access_key, LIST_URI.clone())
     }
 }

@@ -1,4 +1,5 @@
-#[macro_use] extern crate clap;
+#[macro_use]
+extern crate clap;
 
 use clap::Shell;
 use std::path::Path;
@@ -14,7 +15,7 @@ fn main() {
                     let mut app = build_cli();
                     app.gen_completions("splash", s, ::std::env::var("OUT_DIR").unwrap());
                 },
-                Err(e) => eprintln!("{}", e)
+                Err(e) => eprintln!("{}", e),
             }
         } else {
             eprintln!("Invalid shell env var");

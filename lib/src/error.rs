@@ -17,7 +17,7 @@ pub enum ErrorKind {
 
     /// Raised when the response from Unsplash cannot be understood.
     #[fail(display = "Failed to parse response from Unsplash.")]
-    MalformedResponse
+    MalformedResponse,
 }
 
 impl Fail for Error {
@@ -42,7 +42,5 @@ impl From<Context<ErrorKind>> for Error {
 
 impl Error {
     /// Returns the context of this error
-    pub fn kind(&self) -> ErrorKind {
-        *self.inner.get_context()
-    }
+    pub fn kind(&self) -> ErrorKind { *self.inner.get_context() }
 }
