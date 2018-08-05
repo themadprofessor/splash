@@ -77,6 +77,19 @@ pub struct UserLinks {
     pub portfolio: String,
 }
 
+/// Session type for handling user updates
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct UserUpdate {
+    username: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
+    email: Option<String>,
+    url: Option<String>,
+    location: Option<String>,
+    bio: Option<String>,
+    instagram_username: Option<String>
+}
+
 impl Me {
     /// Gets the user data of the current user
     ///
@@ -87,6 +100,72 @@ impl Me {
     /// Unsplash is invalid.     - wrapping an IO error is raised if an IO
     /// error occurs.
     pub fn get<C>(self, client: &Client<C>, bearer: &str) -> impl Future<Item=User, Error=Error> where C: Connect + 'static {
-        ::endpoint::get((), client, bearer, ME_URI.clone())
+        ::endpoint::get((), client, format!("Bearer {}", bearer).as_ref(), ME_URI.clone())
+    }
+
+    /// Update the current user's information.
+    pub fn update(self) -> UserUpdate {
+        UserUpdate::default()
+    }
+}
+
+impl UserUpdate {
+    /// Update the user's username.
+    pub fn username(mut self, username: String) -> Self {
+        self.username.replace(username);
+        self
+    }
+
+    /// Update the user's first name.
+    pub fn first_name(mut self, first_name: String) -> Self {
+        self.first_name.replace(first_name);
+        self
+    }
+
+    /// Update the user's last name.
+    pub fn last_name(mut self, last_name: String) -> Self {
+        self.last_name.replace(last_name);
+        self
+    }
+
+    /// Update the user's email.
+    pub fn email(mut self, email: String) -> Self {
+        self.email.replace(email);
+        self
+    }
+
+    /// Update the user's url.
+    pub fn url(mut self, url: String) -> Self {
+        self.url.replace(url);
+        self
+    }
+
+    /// Update the user's location.
+    pub fn location(mut self, location: String) -> Self {
+        self.location.replace(location);
+        self
+    }
+
+    /// Update the user's bio.
+    pub fn bio(mut self, bio: String) -> Self {
+        self.bio.replace(bio);
+        self
+    }
+
+    /// Update the user's Instagram username.
+    pub fn instagram_username(mut self, instagram_username: String) -> Self {
+        self.instagram_username.replace(instagram_username);
+        self
+    }
+
+    /// Update the user's profile.
+    ///
+    /// # Errors
+    /// - Request wrapping a Hyper error is raised if there is an error
+    /// handling the HTTP Stream. - MalformedResponse
+    ///     - wrapping a JSON error is raised if the JSON returned from
+    /// Unsplash is invalid.
+    pub fn update<C>(self, client: &Client<C>, bearer: &str) -> impl Future<Item=User, Error=Error> where C: Connect + 'static {
+        ::endpoint::put(self, client, format!("Bearer {}", bearer).as_ref(), ME_URI.clone())
     }
 }

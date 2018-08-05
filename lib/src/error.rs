@@ -15,6 +15,11 @@ pub enum ErrorKind {
     #[fail(display = "Failed to send request.")]
     Request,
 
+    /// Raised when the caller's supplied access_token or bearer doesn't have permission to access
+    /// an endpoint.
+    #[fail(display = "Not authorized to access endpoint.")]
+    Forbidden,
+
     /// Raised when the response from Unsplash cannot be understood.
     #[fail(display = "Failed to parse response from Unsplash.")]
     MalformedResponse,

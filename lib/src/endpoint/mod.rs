@@ -5,7 +5,7 @@ pub mod me;
 
 use failure::Fail;
 use futures::{Future, Stream};
-use hyper::{client::connect::Connect, Client, Request, Uri};
+use hyper::{client::connect::Connect, Client, Request, Uri, Method, StatusCode};
 use itertools::Itertools;
 use serde::{de::DeserializeOwned, ser::Serialize};
 
@@ -80,11 +80,70 @@ where
 
 /// Convenience method for performing a GET request to Unsplash, determining if
 /// an error occur and returning a Future to represent this.
+///
+
 fn get<T, C, R>(
     query: T,
     client: &Client<C>,
     auth: &str,
     uri: Uri,
+) -> impl Future<Item = R, Error = Error>
+    where
+        T: Serialize,
+        C: Connect + 'static,
+        R: DeserializeOwned,
+{
+    request(query, client, auth, uri, Method::GET)
+}
+
+fn put<T, C, R>(
+    query: T,
+    client: &Client<C>,
+    auth: &str,
+    uri: Uri,
+) -> impl Future<Item = R, Error = Error>
+    where
+        T: Serialize,
+        C: Connect + 'static,
+        R: DeserializeOwned,
+{
+    request(query, client, auth, uri, Method::PUT)
+}
+
+fn delete<T, C, R>(
+    query: T,
+    client: &Client<C>,
+    auth: &str,
+    uri: Uri,
+) -> impl Future<Item = R, Error = Error>
+    where
+        T: Serialize,
+        C: Connect + 'static,
+        R: DeserializeOwned,
+{
+    request(query, client, auth, uri, Method::DELETE)
+}
+
+fn post<T, C, R>(
+    query: T,
+    client: &Client<C>,
+    auth: &str,
+    uri: Uri,
+) -> impl Future<Item = R, Error = Error>
+    where
+        T: Serialize,
+        C: Connect + 'static,
+        R: DeserializeOwned,
+{
+    request(query, client, auth, uri, Method::POST)
+}
+
+fn request<T, C, R>(
+    query: T,
+    client: &Client<C>,
+    auth: &str,
+    uri: Uri,
+    method: Method
 ) -> impl Future<Item = R, Error = Error>
 where
     T: Serialize,
@@ -92,7 +151,9 @@ where
     R: DeserializeOwned,
 {
     debug!("generating request");
-    let request = Request::get(format!("{}{}", uri, query.to_query()))
+    let request = Request::builder()
+        .method(method)
+        .uri(format!("{}{}", uri, query.to_query()))
         .header("Accept", "application/json")
         .header("Accept-Version", "v1")
         .header("Authorization", auth)
@@ -105,11 +166,13 @@ where
             debug!("status code: {}", res.status());
             trace!("response: {:?}", res);
             let parser = if res.status().is_success() { parse_data::<R> } else { parse_err };
+            let status = res.status().as_u16();
 
             res.into_body()
                 .map_err(|e| Error::from(e.context(ErrorKind::MalformedResponse)))
                 .fold(Vec::new(), fold)
                 .and_then(parser)
+                .map_err(move |e| if status == StatusCode::FORBIDDEN.as_u16() {Error::from(e.context(ErrorKind::Forbidden))} else {e})
         },
     )
 }
