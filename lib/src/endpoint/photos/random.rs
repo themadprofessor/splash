@@ -121,7 +121,8 @@ impl Random {
     /// collections. NOTE: only the number of photos can be set this is
     /// called.
     pub fn collection<I>(self, collection: I) -> RandomCollection
-        where I: IntoIterator<Item = String>
+    where
+        I: IntoIterator<Item = String>,
     {
         RandomCollection { rand: self, collection: collection.into_iter().join(",") }
     }
@@ -140,19 +141,23 @@ impl Random {
     /// handling the HTTP Stream. - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
-    pub fn get<C>(self,
-                  client: &Client<C>,
-                  access_key: &str)
-                  -> impl Future<Item = Photo, Error = Error>
-        where C: Connect + 'static
+    pub fn get<C>(
+        self,
+        client: &Client<C>,
+        access_key: &str,
+    ) -> impl Future<Item = Photo, Error = Error>
+    where
+        C: Connect + 'static,
     {
-        let serial = RandomSerialize { featured: self.featured,
-                                       username: self.username,
-                                       w: self.w,
-                                       h: self.h,
-                                       orientation: self.orientation,
-                                       collection: None,
-                                       query: None, };
+        let serial = RandomSerialize {
+            featured: self.featured,
+            username: self.username,
+            w: self.w,
+            h: self.h,
+            orientation: self.orientation,
+            collection: None,
+            query: None,
+        };
         ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
     }
 }
@@ -172,19 +177,23 @@ impl RandomQuery {
     /// handling the HTTP Stream. - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
-    pub fn get<C>(self,
-                  client: &Client<C>,
-                  access_key: &str)
-                  -> impl Future<Item = Photo, Error = Error>
-        where C: Connect + 'static
+    pub fn get<C>(
+        self,
+        client: &Client<C>,
+        access_key: &str,
+    ) -> impl Future<Item = Photo, Error = Error>
+    where
+        C: Connect + 'static,
     {
-        let serial = RandomSerialize { featured: self.rand.featured,
-                                       username: self.rand.username,
-                                       w: self.rand.w,
-                                       h: self.rand.h,
-                                       orientation: self.rand.orientation,
-                                       collection: None,
-                                       query: Some(self.query), };
+        let serial = RandomSerialize {
+            featured: self.rand.featured,
+            username: self.rand.username,
+            w: self.rand.w,
+            h: self.rand.h,
+            orientation: self.rand.orientation,
+            collection: None,
+            query: Some(self.query),
+        };
         ::endpoint::get(serial, &client, access_key, RANDOM_URI.clone())
     }
 }
@@ -204,19 +213,23 @@ impl RandomCollection {
     /// handling the HTTP Stream. - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
-    pub fn get<C>(self,
-                  client: &Client<C>,
-                  access_key: &str)
-                  -> impl Future<Item = Photo, Error = Error>
-        where C: Connect + 'static
+    pub fn get<C>(
+        self,
+        client: &Client<C>,
+        access_key: &str,
+    ) -> impl Future<Item = Photo, Error = Error>
+    where
+        C: Connect + 'static,
     {
-        let serial = RandomSerialize { featured: self.rand.featured,
-                                       username: self.rand.username,
-                                       w: self.rand.w,
-                                       h: self.rand.h,
-                                       orientation: self.rand.orientation,
-                                       collection: Some(self.collection),
-                                       query: None, };
+        let serial = RandomSerialize {
+            featured: self.rand.featured,
+            username: self.rand.username,
+            w: self.rand.w,
+            h: self.rand.h,
+            orientation: self.rand.orientation,
+            collection: Some(self.collection),
+            query: None,
+        };
         ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
     }
 }
@@ -229,20 +242,24 @@ impl RandomCount {
     /// handling the HTTP Stream. - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
-    pub fn get<C>(self,
-                  client: &Client<C>,
-                  access_key: &str)
-                  -> impl Future<Item = Vec<Photo>, Error = Error>
-        where C: Connect + 'static
+    pub fn get<C>(
+        self,
+        client: &Client<C>,
+        access_key: &str,
+    ) -> impl Future<Item = Vec<Photo>, Error = Error>
+    where
+        C: Connect + 'static,
     {
-        let serial = RandomCountSerialize { featured: self.rand.featured,
-                                            username: self.rand.username,
-                                            w: self.rand.w,
-                                            h: self.rand.h,
-                                            orientation: self.rand.orientation,
-                                            collection: None,
-                                            query: None,
-                                            count: self.count, };
+        let serial = RandomCountSerialize {
+            featured: self.rand.featured,
+            username: self.rand.username,
+            w: self.rand.w,
+            h: self.rand.h,
+            orientation: self.rand.orientation,
+            collection: None,
+            query: None,
+            count: self.count,
+        };
         ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
     }
 }
@@ -255,20 +272,24 @@ impl RandomQueryCount {
     /// handling the HTTP Stream. - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
-    pub fn get<C>(self,
-                  client: &Client<C>,
-                  access_key: &str)
-                  -> impl Future<Item = Vec<Photo>, Error = Error>
-        where C: Connect + 'static
+    pub fn get<C>(
+        self,
+        client: &Client<C>,
+        access_key: &str,
+    ) -> impl Future<Item = Vec<Photo>, Error = Error>
+    where
+        C: Connect + 'static,
     {
-        let serial = RandomCountSerialize { featured: self.rand.rand.featured,
-                                            username: self.rand.rand.username,
-                                            w: self.rand.rand.w,
-                                            h: self.rand.rand.h,
-                                            orientation: self.rand.rand.orientation,
-                                            collection: None,
-                                            query: Some(self.rand.query),
-                                            count: self.count, };
+        let serial = RandomCountSerialize {
+            featured: self.rand.rand.featured,
+            username: self.rand.rand.username,
+            w: self.rand.rand.w,
+            h: self.rand.rand.h,
+            orientation: self.rand.rand.orientation,
+            collection: None,
+            query: Some(self.rand.query),
+            count: self.count,
+        };
         ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
     }
 }
@@ -281,20 +302,24 @@ impl RandomCollectionCount {
     /// handling the HTTP Stream. - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
-    pub fn get<C>(self,
-                  client: &Client<C>,
-                  access_key: &str)
-                  -> impl Future<Item = Vec<Photo>, Error = Error>
-        where C: Connect + 'static
+    pub fn get<C>(
+        self,
+        client: &Client<C>,
+        access_key: &str,
+    ) -> impl Future<Item = Vec<Photo>, Error = Error>
+    where
+        C: Connect + 'static,
     {
-        let serial = RandomCountSerialize { featured: self.rand.rand.featured,
-                                            username: self.rand.rand.username,
-                                            w: self.rand.rand.w,
-                                            h: self.rand.rand.h,
-                                            orientation: self.rand.rand.orientation,
-                                            collection: Some(self.rand.collection),
-                                            query: None,
-                                            count: self.count, };
+        let serial = RandomCountSerialize {
+            featured: self.rand.rand.featured,
+            username: self.rand.rand.username,
+            w: self.rand.rand.w,
+            h: self.rand.rand.h,
+            orientation: self.rand.rand.orientation,
+            collection: Some(self.rand.collection),
+            query: None,
+            count: self.count,
+        };
         ::endpoint::get(serial, client, access_key, RANDOM_URI.clone())
     }
 }

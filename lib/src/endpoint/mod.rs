@@ -4,8 +4,8 @@ pub mod photos;
 use failure::Fail;
 use futures::{Future, Stream};
 use hyper::{client::connect::Connect, Client, Request, Uri};
-use serde::{de::DeserializeOwned, ser::Serialize};
 use itertools::Itertools;
+use serde::{de::DeserializeOwned, ser::Serialize};
 
 use std::{error::Error as StdError, fmt};
 
@@ -23,7 +23,9 @@ pub trait ToQuery {
     fn to_query(&self) -> String;
 }
 
-impl<T> ToQuery for T where T: Serialize
+impl<T> ToQuery for T
+where
+    T: Serialize,
 {
     fn to_query(&self) -> String {
         let s = ::serde_url_params::to_string(&self).unwrap();
@@ -54,7 +56,8 @@ impl fmt::Display for Errors {
 
 /// Used to parse JSON into [Errors](struct.Errors.html).
 fn parse_err<T>(v: Vec<u8>) -> ::futures::future::FutureResult<T, Error>
-    where T: DeserializeOwned
+where
+    T: DeserializeOwned,
 {
     match ::serde_json::from_slice::<::endpoint::Errors>(&v) {
         Ok(j) => ::futures::future::err(Error::from(j.context(ErrorKind::MalformedResponse))),
@@ -64,7 +67,8 @@ fn parse_err<T>(v: Vec<u8>) -> ::futures::future::FutureResult<T, Error>
 
 /// Used to parse JSON into any serializable type.
 fn parse_data<T>(v: Vec<u8>) -> ::futures::future::FutureResult<T, Error>
-    where T: DeserializeOwned
+where
+    T: DeserializeOwned,
 {
     match ::serde_json::from_slice::<T>(&v) {
         Ok(j) => ::futures::future::ok(j),
@@ -74,38 +78,38 @@ fn parse_data<T>(v: Vec<u8>) -> ::futures::future::FutureResult<T, Error>
 
 /// Convenience method for performing a GET request to Unsplash, determining if
 /// an error occur and returning a Future to represent this.
-fn get<T, C, R>(query: T,
-                client: &Client<C>,
-                access_key: &str,
-                uri: Uri)
-                -> impl Future<Item = R, Error = Error>
-    where T: Serialize,
-          C: Connect + 'static,
-          R: DeserializeOwned
+fn get<T, C, R>(
+    query: T,
+    client: &Client<C>,
+    access_key: &str,
+    uri: Uri,
+) -> impl Future<Item = R, Error = Error>
+where
+    T: Serialize,
+    C: Connect + 'static,
+    R: DeserializeOwned,
 {
     debug!("generating request");
-    let request =
-        Request::get(format!("{}{}", uri, query.to_query())).header("Accept", "application/json")
-                                                            .header("Accept-Version", "v1")
-                                                            .header("Authorization",
-                                                                    format!("Client-ID {}",
-                                                                            access_key).as_str())
-                                                            .body(::hyper::Body::empty())
-                                                            .unwrap();
+    let request = Request::get(format!("{}{}", uri, query.to_query()))
+        .header("Accept", "application/json")
+        .header("Accept-Version", "v1")
+        .header("Authorization", format!("Client-ID {}", access_key).as_str())
+        .body(::hyper::Body::empty())
+        .unwrap();
     trace!("request: {:?}", request);
 
-    client.request(request)
-          .map_err(move |e| Error::from(e.context(ErrorKind::Request)))
-          .and_then(|res| {
-                  debug!("status code: {}", res.status());
-                  trace!("response: {:?}", res);
-                  let parser = if res.status().is_success() { parse_data::<R> } else { parse_err };
+    client.request(request).map_err(move |e| Error::from(e.context(ErrorKind::Request))).and_then(
+        |res| {
+            debug!("status code: {}", res.status());
+            trace!("response: {:?}", res);
+            let parser = if res.status().is_success() { parse_data::<R> } else { parse_err };
 
-                  res.into_body()
-                     .map_err(|e| Error::from(e.context(ErrorKind::MalformedResponse)))
-                     .fold(Vec::new(), fold)
-                     .and_then(parser)
-              })
+            res.into_body()
+                .map_err(|e| Error::from(e.context(ErrorKind::MalformedResponse)))
+                .fold(Vec::new(), fold)
+                .and_then(parser)
+        },
+    )
 }
 
 /// Used to convert a Stream of Chunks into a Vec to be used for

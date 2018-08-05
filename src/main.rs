@@ -1,8 +1,9 @@
 #[macro_use]
 extern crate clap;
-#[macro_use] extern crate log;
-extern crate flexi_logger;
+#[macro_use]
+extern crate log;
 extern crate failure;
+extern crate flexi_logger;
 extern crate futures;
 extern crate hyper;
 extern crate hyper_rustls;
@@ -11,9 +12,9 @@ extern crate tokio;
 extern crate wallpaper;
 
 use failure::Error;
+use flexi_logger::Logger;
 use hyper::rt::Future;
 use tokio::runtime::Runtime;
-use flexi_logger::Logger;
 
 mod cli;
 use cli::build_cli;
@@ -22,13 +23,17 @@ const KEY: &str = "87e5c4f5e3db3a47a9cbc9abefbd196e3f7aa9a7cccc1ca4751008ec796e4
 
 fn main() {
     if let Err(e) = run() {
-        error!("{}{}",
-                  e,
-                  e.iter_causes().map(|err| format!("\n\tcause: {}", err)).fold(String::new(),
-                                                                                |mut s, err| {
-                                                                                    s += &err;
-                                                                                    s
-                                                                                }));
+        error!(
+            "{}{}",
+            e,
+            e.iter_causes().map(|err| format!("\n\tcause: {}", err)).fold(
+                String::new(),
+                |mut s, err| {
+                    s += &err;
+                    s
+                }
+            )
+        );
         ::std::process::exit(-1);
     }
 }
@@ -54,11 +59,11 @@ fn run() -> Result<(), Error> {
     if let Some(orient) = matches.value_of_lossy("orientation") {
         use splash_rs::endpoint::photos::Orientation::*;
         fut = fut.orientation(match orient.as_ref() {
-                                  "portrait" => Portrait,
-                                  "landscape" => Landscape,
-                                  "squarish" => Squarish,
-                                  _ => return Err(::failure::err_msg("invalid orientation")),
-                              })
+            "portrait" => Portrait,
+            "landscape" => Landscape,
+            "squarish" => Squarish,
+            _ => return Err(::failure::err_msg("invalid orientation")),
+        })
     }
 
     let client = hyper::Client::builder().build(hyper_rustls::HttpsConnector::new(2));
@@ -68,60 +73,54 @@ fn run() -> Result<(), Error> {
     if let Some(query) = matches.value_of_lossy("query") {
         debug!("using query");
         trace!("query: {}", query);
-        let fut =
-            fut.query(query.to_string())
-               .get(&client, KEY)
-               .map_err(Error::from)
-                .map(|p| {
-                    println!("Photo by {} ({})", p.user.username, p.user.name);
-                    println!("URL: {}", p.links.html);
-                    println!("Profile: {}", p.user.links.html);
-                    p
-                })
-                .and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
-               .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
-                             Ok(_) => ::futures::future::ok(()),
-                             Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
-                         })
-               .map_err(|e| eprintln!("{:?}", e));
+        let fut = fut
+            .query(query.to_string())
+            .get(&client, KEY)
+            .map_err(Error::from)
+            .map(|p| {
+                println!("Photo by {} ({})", p.user.username, p.user.name);
+                println!("URL: {}", p.links.html);
+                println!("Profile: {}", p.user.links.html);
+                p
+            }).and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
+            .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
+                Ok(_) => ::futures::future::ok(()),
+                Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
+            }).map_err(|e| eprintln!("{:?}", e));
         runtime.block_on(fut).map_err(|_| ::failure::err_msg("failed to wait for response"))?;
     } else if let Some(collections) = matches.values_of_lossy("collections") {
         debug!("using collections");
         trace!("collections: {:?}", collections);
-        let fut =
-            fut.collection(collections)
-               .get(&client, KEY)
-               .map_err(Error::from)
-                .map(|p| {
-                    println!("Photo by {} ({})", p.user.username, p.user.name);
-                    println!("URL: {}", p.user.links.html);
-                    println!("Profile: {}", p.links.html);
-                    p
-                })
-                .and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
-               .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
-                             Ok(_) => ::futures::future::ok(()),
-                             Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
-                         })
-               .map_err(|e| eprintln!("{:?}", e));
+        let fut = fut
+            .collection(collections)
+            .get(&client, KEY)
+            .map_err(Error::from)
+            .map(|p| {
+                println!("Photo by {} ({})", p.user.username, p.user.name);
+                println!("URL: {}", p.user.links.html);
+                println!("Profile: {}", p.links.html);
+                p
+            }).and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
+            .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
+                Ok(_) => ::futures::future::ok(()),
+                Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
+            }).map_err(|e| eprintln!("{:?}", e));
         runtime.block_on(fut).map_err(|_| ::failure::err_msg("failed to wait for response"))?;
     } else {
         debug!("no query or collection");
-        let fut =
-            fut.get(&client, KEY)
-               .map_err(Error::from)
-               .map(|p| {
-                   println!("Photo by {} ({})", p.user.username, p.user.name);
-                   println!("URL: {}", p.links.html);
-                   println!("Profile: {}", p.user.links.html);
-                   p
-               })
-                .and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
-               .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
-                             Ok(_) => ::futures::future::ok(()),
-                             Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
-                         })
-               .map_err(|e| eprintln!("{:?}", e));
+        let fut = fut
+            .get(&client, KEY)
+            .map_err(Error::from)
+            .map(|p| {
+                println!("Photo by {} ({})", p.user.username, p.user.name);
+                println!("URL: {}", p.links.html);
+                println!("Profile: {}", p.user.links.html);
+                p
+            }).and_then(move |p| p.get_download_url(&client, KEY).map_err(Error::from))
+            .and_then(|p| match wallpaper::set_from_url(p.as_ref()) {
+                Ok(_) => ::futures::future::ok(()),
+                Err(e) => ::futures::future::err(::failure::err_msg(format!("{}", e))),
+            }).map_err(|e| eprintln!("{:?}", e));
         runtime.block_on(fut).map_err(|_| ::failure::err_msg("failed to wait for response"))?;
     }
 
