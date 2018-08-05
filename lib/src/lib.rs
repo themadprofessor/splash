@@ -1,4 +1,5 @@
 #![feature(option_replace)]
+#![feature(external_doc)]
 #![deny(
     missing_docs,
     missing_debug_implementations,
@@ -9,7 +10,9 @@
     unused_import_braces,
     unused_qualifications
 )]
-//! Documentation
+
+#![doc(include = "../README.md")]
+
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
