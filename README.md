@@ -1,10 +1,35 @@
-# splash-rs
+# splash
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 > CLI tool to set wallpaper to random photo from Unsplash written in Rust
 
-TODO: Fill out this long description.
+Splash is a cross-platform CLI tool which downloads a random photo from Unsplash and sets it as the current wallpaper. 
+Without any arguments, splash will not restrict which photos can be chosen from. See [usage](#usage) for more details. 
+
+##### Platform specific information:
+
+- Download location
+    - Linux - `$XDG_CACHE_DIR` or `$HOME/.cache`
+    - Mac OSX - `$HOME/Library/Caches`
+    - Windows - `FOLDERID_LocalAppData` which is defaults to `%LOCALAPPDATA%` which defaults to `%USERPROFILE%\AppData\Local`
+- Supported desktops
+    - Windows
+    - Mac OSX
+    - Linux
+        - GNOME
+        - KDE
+        - Cinnamon
+        - Unity
+        - Budgie
+        - XFCE
+        - LXDE
+        - MATE
+        - Deepin
+        - i3
+        
+See [wallpaper.rs](https://github.com/reujab/wallpaper.rs) for more details on supported desktops and [dirs-rs](https://github.com/soc/dirs-rs)
+for more details on download locations, specifically cache_dir.
 
 ## Table of Contents
 
