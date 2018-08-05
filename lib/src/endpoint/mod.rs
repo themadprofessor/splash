@@ -85,6 +85,7 @@ fn get<T, C, R>(query: T,
           C: Connect + 'static,
           R: DeserializeOwned
 {
+    debug!("generating request");
     let request =
         Request::get(format!("{}{}", uri, query.to_query())).header("Accept", "application/json")
                                                             .header("Accept-Version", "v1")
@@ -93,9 +94,13 @@ fn get<T, C, R>(query: T,
                                                                             access_key).as_str())
                                                             .body(::hyper::Body::empty())
                                                             .unwrap();
+    trace!("request: {:?}", request);
+
     client.request(request)
           .map_err(move |e| Error::from(e.context(ErrorKind::Request)))
           .and_then(|res| {
+                  debug!("status code: {}", res.status());
+                  trace!("response: {:?}", res);
                   let parser = if res.status().is_success() { parse_data::<R> } else { parse_err };
 
                   res.into_body()

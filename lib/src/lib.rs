@@ -14,6 +14,8 @@ extern crate serde_derive;
 extern crate failure;
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate log;
 extern crate chrono;
 extern crate futures;
 extern crate hyper;
