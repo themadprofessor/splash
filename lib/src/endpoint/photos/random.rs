@@ -138,7 +138,8 @@ impl Random {
     ///
     /// # Errors
     /// - Request wrapping a Hyper error is raised if there is an error
-    /// handling the HTTP Stream. - MalformedResponse
+    /// handling the HTTP Stream.
+    /// - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
     pub fn get<C>(
@@ -174,7 +175,8 @@ impl RandomQuery {
     ///
     /// # Errors
     /// - Request wrapping a Hyper error is raised if there is an error
-    /// handling the HTTP Stream. - MalformedResponse
+    /// handling the HTTP Stream.
+    /// - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
     pub fn get<C>(
@@ -194,7 +196,12 @@ impl RandomQuery {
             collection: None,
             query: Some(self.query),
         };
-        ::endpoint::get(serial, &client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
+        ::endpoint::get(
+            serial,
+            &client,
+            format!("Client-ID: {}", access_key).as_ref(),
+            RANDOM_URI.clone(),
+        )
     }
 }
 
@@ -210,7 +217,8 @@ impl RandomCollection {
     ///
     /// # Errors
     /// - Request wrapping a Hyper error is raised if there is an error
-    /// handling the HTTP Stream. - MalformedResponse
+    /// handling the HTTP Stream.
+    /// - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
     pub fn get<C>(
@@ -230,7 +238,12 @@ impl RandomCollection {
             collection: Some(self.collection),
             query: None,
         };
-        ::endpoint::get(serial, client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
+        ::endpoint::get(
+            serial,
+            client,
+            format!("Client-ID: {}", access_key).as_ref(),
+            RANDOM_URI.clone(),
+        )
     }
 }
 
@@ -239,7 +252,8 @@ impl RandomCount {
     ///
     /// # Errors
     /// - Request wrapping a Hyper error is raised if there is an error
-    /// handling the HTTP Stream. - MalformedResponse
+    /// handling the HTTP Stream.
+    /// - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
     pub fn get<C>(
@@ -260,7 +274,12 @@ impl RandomCount {
             query: None,
             count: self.count,
         };
-        ::endpoint::get(serial, client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
+        ::endpoint::get(
+            serial,
+            client,
+            format!("Client-ID: {}", access_key).as_ref(),
+            RANDOM_URI.clone(),
+        )
     }
 }
 
@@ -269,7 +288,8 @@ impl RandomQueryCount {
     ///
     /// # Errors
     /// - Request wrapping a Hyper error is raised if there is an error
-    /// handling the HTTP Stream. - MalformedResponse
+    /// handling the HTTP Stream.
+    /// - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
     pub fn get<C>(
@@ -290,7 +310,12 @@ impl RandomQueryCount {
             query: Some(self.rand.query),
             count: self.count,
         };
-        ::endpoint::get(serial, client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
+        ::endpoint::get(
+            serial,
+            client,
+            format!("Client-ID: {}", access_key).as_ref(),
+            RANDOM_URI.clone(),
+        )
     }
 }
 
@@ -299,7 +324,8 @@ impl RandomCollectionCount {
     ///
     /// # Errors
     /// - Request wrapping a Hyper error is raised if there is an error
-    /// handling the HTTP Stream. - MalformedResponse
+    /// handling the HTTP Stream.
+    /// - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
     pub fn get<C>(
@@ -320,6 +346,11 @@ impl RandomCollectionCount {
             query: None,
             count: self.count,
         };
-        ::endpoint::get(serial, client, format!("Client-ID: {}", access_key).as_ref(), RANDOM_URI.clone())
+        ::endpoint::get(
+            serial,
+            client,
+            format!("Client-ID: {}", access_key).as_ref(),
+            RANDOM_URI.clone(),
+        )
     }
 }

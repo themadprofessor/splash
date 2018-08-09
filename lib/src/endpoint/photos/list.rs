@@ -51,9 +51,11 @@ impl List {
     ///
     /// # Errors
     /// - Request wrapping a Hyper error is raised if there is an error
-    /// handling the HTTP Stream. - MalformedResponse
+    /// handling the HTTP Stream.
+    /// - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
-    /// Unsplash is invalid.     - wrapping an IO error is raised if an IO
+    /// Unsplash is invalid.
+    ///     - wrapping an IO error is raised if an IO
     /// error occurs.
     pub fn get<C>(
         self,
@@ -63,6 +65,11 @@ impl List {
     where
         C: Connect + 'static,
     {
-        ::endpoint::get(self, client, format!("Client-ID: {}", access_key).as_ref(), LIST_URI.clone())
+        ::endpoint::get(
+            self,
+            client,
+            format!("Client-ID: {}", access_key).as_ref(),
+            LIST_URI.clone(),
+        )
     }
 }

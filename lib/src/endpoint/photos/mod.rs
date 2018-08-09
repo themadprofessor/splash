@@ -3,9 +3,9 @@
 //! Access to the endpoint is through the [Photo](struct.Photos.html) struct.
 
 use chrono::{DateTime, FixedOffset};
+use endpoint::me::User;
 use futures::Future;
 use hyper::{client::connect::Connect, Client};
-use endpoint::me::User;
 
 use std::fmt;
 
@@ -139,7 +139,12 @@ impl Photo {
     where
         C: Connect + 'static,
     {
-        ::endpoint::get((), &client, format!("Client-ID: {}", access_key).as_ref(), self.links.download_location.parse().unwrap())
+        ::endpoint::get(
+            (),
+            &client,
+            format!("Client-ID: {}", access_key).as_ref(),
+            self.links.download_location.parse().unwrap(),
+        )
     }
 }
 

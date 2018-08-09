@@ -1,11 +1,11 @@
-/// Photos endpoint.
-pub mod photos;
 /// Me endpoint.
 pub mod me;
+/// Photos endpoint.
+pub mod photos;
 
 use failure::Fail;
 use futures::{Future, Stream};
-use hyper::{client::connect::Connect, Client, Request, Uri, Method, StatusCode};
+use hyper::{client::connect::Connect, Client, Method, Request, StatusCode, Uri};
 use itertools::Itertools;
 use serde::{de::DeserializeOwned, ser::Serialize};
 
@@ -88,10 +88,10 @@ fn get<T, C, R>(
     auth: &str,
     uri: Uri,
 ) -> impl Future<Item = R, Error = Error>
-    where
-        T: Serialize,
-        C: Connect + 'static,
-        R: DeserializeOwned,
+where
+    T: Serialize,
+    C: Connect + 'static,
+    R: DeserializeOwned,
 {
     request(query, client, auth, uri, Method::GET)
 }
@@ -102,10 +102,10 @@ fn put<T, C, R>(
     auth: &str,
     uri: Uri,
 ) -> impl Future<Item = R, Error = Error>
-    where
-        T: Serialize,
-        C: Connect + 'static,
-        R: DeserializeOwned,
+where
+    T: Serialize,
+    C: Connect + 'static,
+    R: DeserializeOwned,
 {
     request(query, client, auth, uri, Method::PUT)
 }
@@ -116,10 +116,10 @@ fn delete<T, C, R>(
     auth: &str,
     uri: Uri,
 ) -> impl Future<Item = R, Error = Error>
-    where
-        T: Serialize,
-        C: Connect + 'static,
-        R: DeserializeOwned,
+where
+    T: Serialize,
+    C: Connect + 'static,
+    R: DeserializeOwned,
 {
     request(query, client, auth, uri, Method::DELETE)
 }
@@ -130,10 +130,10 @@ fn post<T, C, R>(
     auth: &str,
     uri: Uri,
 ) -> impl Future<Item = R, Error = Error>
-    where
-        T: Serialize,
-        C: Connect + 'static,
-        R: DeserializeOwned,
+where
+    T: Serialize,
+    C: Connect + 'static,
+    R: DeserializeOwned,
 {
     request(query, client, auth, uri, Method::POST)
 }
@@ -143,7 +143,7 @@ fn request<T, C, R>(
     client: &Client<C>,
     auth: &str,
     uri: Uri,
-    method: Method
+    method: Method,
 ) -> impl Future<Item = R, Error = Error>
 where
     T: Serialize,
@@ -172,7 +172,13 @@ where
                 .map_err(|e| Error::from(e.context(ErrorKind::MalformedResponse)))
                 .fold(Vec::new(), fold)
                 .and_then(parser)
-                .map_err(move |e| if status == StatusCode::FORBIDDEN.as_u16() {Error::from(e.context(ErrorKind::Forbidden))} else {e})
+                .map_err(move |e| {
+                    if status == StatusCode::FORBIDDEN.as_u16() {
+                        Error::from(e.context(ErrorKind::Forbidden))
+                    } else {
+                        e
+                    }
+                })
         },
     )
 }

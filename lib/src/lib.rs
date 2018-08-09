@@ -10,7 +10,6 @@
     unused_import_braces,
     unused_qualifications
 )]
-
 #![doc(include = "../README.md")]
 
 #[macro_use]
@@ -38,5 +37,4 @@ pub mod endpoint;
 /// Errors that can be raised.
 pub mod error;
 
-pub use endpoint::photos::Photos;
-pub use endpoint::me::Me;
+pub use endpoint::{me::Me, photos::Photos};

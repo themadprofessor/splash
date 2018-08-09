@@ -1,6 +1,5 @@
-use hyper::{Client, Uri};
-use hyper::client::connect::Connect;
 use futures::Future;
+use hyper::{client::connect::Connect, Client, Uri};
 
 use error::Error;
 
@@ -47,7 +46,7 @@ pub struct User {
     /// When user's profile was last updated
     pub updated_at: Option<String>,
     /// Is this user followed by the user who accessed the api.
-    pub followed_by_user: Option<bool>
+    pub followed_by_user: Option<bool>,
 }
 
 /// A user's profile images
@@ -87,7 +86,7 @@ pub struct UserUpdate {
     url: Option<String>,
     location: Option<String>,
     bio: Option<String>,
-    instagram_username: Option<String>
+    instagram_username: Option<String>,
 }
 
 impl Me {
@@ -95,18 +94,21 @@ impl Me {
     ///
     /// # Errors
     /// - Request wrapping a Hyper error is raised if there is an error
-    /// handling the HTTP Stream. - MalformedResponse
+    /// handling the HTTP Stream.
+    /// - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
-    /// Unsplash is invalid.     - wrapping an IO error is raised if an IO
+    /// Unsplash is invalid.
+    ///     - wrapping an IO error is raised if an IO
     /// error occurs.
-    pub fn get<C>(self, client: &Client<C>, bearer: &str) -> impl Future<Item=User, Error=Error> where C: Connect + 'static {
+    pub fn get<C>(self, client: &Client<C>, bearer: &str) -> impl Future<Item = User, Error = Error>
+    where
+        C: Connect + 'static,
+    {
         ::endpoint::get((), client, format!("Bearer {}", bearer).as_ref(), ME_URI.clone())
     }
 
     /// Update the current user's information.
-    pub fn update(self) -> UserUpdate {
-        UserUpdate::default()
-    }
+    pub fn update(self) -> UserUpdate { UserUpdate::default() }
 }
 
 impl UserUpdate {
@@ -165,7 +167,14 @@ impl UserUpdate {
     /// handling the HTTP Stream. - MalformedResponse
     ///     - wrapping a JSON error is raised if the JSON returned from
     /// Unsplash is invalid.
-    pub fn update<C>(self, client: &Client<C>, bearer: &str) -> impl Future<Item=User, Error=Error> where C: Connect + 'static {
+    pub fn update<C>(
+        self,
+        client: &Client<C>,
+        bearer: &str,
+    ) -> impl Future<Item = User, Error = Error>
+    where
+        C: Connect + 'static,
+    {
         ::endpoint::put(self, client, format!("Bearer {}", bearer).as_ref(), ME_URI.clone())
     }
 }
