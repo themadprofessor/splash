@@ -7,10 +7,8 @@ build = "build.rs"
 [build-dependencies]
 clap = "2.23"
 
-[workspace]
-
 [dependencies]
-splash-rs = {version = "*", path="lib/"}
+splash-rs = "*"
 hyper-rustls = "0.14"
 hyper = {version = "0.12", default-features = false, features = []}
 tokio = "0.1"
